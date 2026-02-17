@@ -1,0 +1,26 @@
+---
+description: Auth store and guard patterns
+globs: shared/auth/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Auth Patterns
+
+## AuthStore
+
+- `AuthStore` is a framework-agnostic singleton registered on `globalThis` for microfrontend compatibility
+- React components consume it via `useAuth()` hook (backed by `useSyncExternalStore`)
+- Never import `authStore` directly in components — always use the `useAuth` hook
+
+## Guards
+
+- `AuthGuard` lives at the root shell level — it handles all auth redirects
+- Other guards (`RoleGuard`, `FeatureGuard`, `SubscriptionGuard`, `TrialGuard`) do NOT check `isAuthenticated` — they assume `AuthGuard` already ran
+- Each guard checks ONE concern only (single responsibility)
+
+## Testing
+
+- Use `AuthStore` class directly in unit tests (create fresh instances)
+- Use `authStore.reset()` in `beforeEach` for component/guard tests
+- Mock users are in `shared/auth/__testing__/mock-users.ts`
+- Use `renderWithRouter()` and `guardRoutes()` from `__testing__/render-with-router.tsx`

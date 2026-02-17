@@ -1,0 +1,71 @@
+---
+description: Weekly architecture audit prompt for AI agents — run proactively or when asked to "audit", "check quality", or "review architecture"
+alwaysApply: false
+---
+
+# Weekly Architecture Audit
+
+When a developer asks you to "audit", "check quality", "review architecture", or "check MFE readiness", follow this protocol.
+
+## Step 1: Run the automated audit
+
+```bash
+node scripts/audit.mjs
+```
+
+Fix any ❌ FAIL items before proceeding. Review ⚠️ WARN items with the developer.
+
+## Step 2: Deep checks the script can't catch
+
+After the automated checks, manually verify these areas:
+
+### Module Boundary Discipline
+
+- Open `modules/registry.ts` — every module in `modules/` (except `_template`) must be listed
+- Open `root/main.tsx` — every module with `services/__mocks__/` must register its mocks
+- Search for `@modules/` imports inside any module folder — only `@modules/registry` is allowed
+- No module should import another module's service, types, or components directly
+
+### MFE Readiness
+
+- All stores use `globalThis.__KEY__` singleton pattern (not `window.*` or module-level state)
+- Services are plain classes with zero React imports (no `useState`, `useEffect`, `useSyncExternalStore`)
+- All routes in `routes.ts` files use `lazy: () => import(...)` — no static `Component:` or `element:`
+- Pages export `function Component()` (named, not default) for React Router lazy compatibility
+- Shared UI components accept data via props, not by reaching into module-specific stores
+
+### Code Quality
+
+- Each module's `types.ts` contains only that module's domain types
+- Services return typed responses (`Promise<T>`, `Promise<PaginatedResponse<T>>`)
+- Page loaders are thin: they call a service method and return data, no business logic
+- Error handling uses `ApiError` from `@shared/api`, not ad-hoc try/catch
+- No `any` types in service or page files
+
+### Test Coverage Gaps
+
+- Every module should have a `__tests__/` directory with at least basic tests
+- Shared guards all have tests in `shared/auth/__tests__/`
+- Services with complex logic should have unit tests
+- Check `vitest.config.ts` `test.projects` lists all module configs
+
+## Step 3: Report format
+
+Present findings as:
+
+```
+## Architecture Audit — [date]
+
+### ✅ Clean
+- [list of areas with no issues]
+
+### ⚠️ Warnings
+- [item]: [description and recommendation]
+
+### ❌ Violations
+- [item]: [description, file, and fix]
+
+### 📋 Action Items
+1. [prioritized fix]
+2. [prioritized fix]
+```

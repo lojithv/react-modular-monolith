@@ -1,0 +1,51 @@
+---
+description: Project architecture and conventions for the React modular monolith
+alwaysApply: true
+---
+
+# Project Architecture
+
+Modular monolith built with React 19, React Router v7 (data routing), Vite, and Tailwind CSS v4.
+
+## Directory Structure
+
+- `root/` - App entry point, route composition, global CSS
+- `modules/<name>/` - Feature modules (auth, dashboard, products, users, settings)
+- `shared/api/` - Framework-agnostic HTTP client, typed errors, mock adapter
+- `shared/auth/` - Framework-agnostic auth store, React hooks, route guards
+- `shared/components/` - Reusable app-level components (ErrorBoundary, Forbidden, Paywall, etc.)
+- `shared/layouts/` - Top-level layout components (RootLayout)
+- `shared/ui/` - Primitive UI component library (Button, Input, Card, etc.)
+- `shared/types/` - Shared TypeScript types (ModuleManifest, etc.)
+
+## Three-Layer Architecture
+
+```
+React Layer (pages)  →  Business Logic Layer (services)  →  API Layer (apiClient)
+```
+
+1. **API Client** (`shared/api/`) — HTTP transport: base URL, auth headers, error normalization. Zero business logic.
+2. **Module Services** (`modules/*/services/`) — Domain logic: validation, data transformation, composing API calls. Zero UI knowledge.
+3. **Loaders/Actions** (in page files) — Glue: call the service, return data. Zero business logic.
+
+### Mock Mode
+
+When `VITE_API_MOCK=true`, the API client routes requests through per-module mock handlers registered at startup. Each module owns its own mocks in `services/__mocks__/`.
+
+## Module Conventions
+
+Each module must have:
+- `routes.ts` - RouteObject defining the module's route subtree
+- `layout.tsx` - Module layout component (exported as `Component`)
+- `pages/` - Page components (lazy-loaded)
+- `index.ts` - Barrel export with a `ModuleManifest` object
+- `types.ts` - Module domain types (shared between services and pages)
+- `services/<name>.service.ts` - Business logic service (optional, for modules with data)
+- `services/__mocks__/<name>.mock.ts` - Mock data for development (optional)
+
+## Import Rules
+
+- Use path aliases for cross-directory imports: `@root/`, `@modules/`, `@shared/`
+- Always include `.ts`/`.tsx` extensions on all local imports
+- Within a module's internal files, use relative paths (e.g., `../hooks/useAuth.ts`)
+- Never import from another module's internal files — only from its `index.ts`

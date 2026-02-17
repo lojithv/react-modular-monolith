@@ -1,0 +1,27 @@
+---
+description: Testing conventions for Vitest and React Testing Library
+globs: "**/__tests__/**/*.test.{ts,tsx}"
+alwaysApply: false
+---
+
+# Testing Conventions
+
+## Stack
+
+- Vitest (runs via `vite.config.ts`, globals enabled)
+- @testing-library/react + @testing-library/jest-dom
+- jsdom environment
+
+## File Locations
+
+- Tests live in `__tests__/` directories adjacent to the code they test
+- Test fixtures live in `__testing__/` directories
+- Test files use the pattern `<name>.test.ts` or `<name>.test.tsx`
+
+## Patterns
+
+- Always `authStore.reset()` in `beforeEach` when testing auth-related components
+- Use `renderWithRouter()` for any component that needs a router context
+- Use `guardRoutes()` helper to set up guard + child + login route
+- Prefer `waitFor` over manual delays for async assertions
+- Use `screen.getByTestId` for structural assertions, `screen.getByText` for content
