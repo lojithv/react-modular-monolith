@@ -4,7 +4,6 @@ import dashboardRoutes from './routes.ts';
 export const dashboardModule: ModuleManifest = {
   name: 'dashboard',
   routes: dashboardRoutes,
-  sidebar: [{ to: '/dashboard', label: 'Dashboard' }],
   allowedRoles: ['admin', 'editor', 'viewer'],
 };
 

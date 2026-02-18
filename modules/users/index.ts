@@ -4,7 +4,6 @@ import userRoutes from './routes.ts';
 export const usersModule: ModuleManifest = {
   name: 'users',
   routes: userRoutes,
-  sidebar: [{ to: '/users', label: 'Users', roles: ['admin'] }],
   allowedRoles: ['admin'],
   minPlan: 'pro',
 };

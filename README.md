@@ -6,6 +6,8 @@ A modular monolith built with **React 19**, **React Router v7** (data routing), 
 
 ```
 root/                           App entry point, route composition, global CSS
+  ├── routes.tsx                Route tree composed from module manifests
+  └── navigation.ts            Centralized sidebar config (all modules, one file)
 modules/                        Feature modules (self-contained, isolated)
   ├── auth/                     Public auth flows (login, register, reset)
   ├── dashboard/                Dashboard, analytics, reports
@@ -36,7 +38,15 @@ Pages (UI)  →  Services (business logic)  →  API Client (HTTP transport)
 
 ### Module System
 
-Each module exports a `ModuleManifest` declaring its routes, sidebar entries, role restrictions, and plan requirements. The app shell reads `modules/registry.ts` to automatically compose routing, navigation, and access control.
+Each module exports a `ModuleManifest` declaring its routes, role restrictions, and plan requirements. The app shell reads `modules/registry.ts` to automatically compose routing and access control.
+
+Sidebar navigation is configured centrally in `root/navigation.ts` — one file for all modules. Sidebar visibility is auto-derived from each module's `allowedRoles` and `minPlan`, so access rules are never duplicated.
+
+| Task | File to edit |
+|---|---|
+| Change route structure or pages | `modules/*/routes.ts` |
+| Change who can access a module | `modules/*/index.ts` (`allowedRoles`, `minPlan`) |
+| Add/remove/reorder sidebar items | `root/navigation.ts` |
 
 ```
 Module → @shared/*    ✅ allowed
@@ -91,6 +101,7 @@ The app runs with mock data out of the box — no backend needed.
 2. Find-and-replace placeholders: `__name__` → `order`, `__Name__` → `Order`, `__NAME__` → `ORDER`
 3. Rename files to match your module name
 4. Register in `modules/registry.ts`, `root/main.tsx` (mocks), `vite.config.ts` (test project), and `package.json` (test script)
+5. Add a sidebar entry in `root/navigation.ts`
 
 Full guide: [`modules/_template/MODULE_TEMPLATE.md`](modules/_template/MODULE_TEMPLATE.md)
 

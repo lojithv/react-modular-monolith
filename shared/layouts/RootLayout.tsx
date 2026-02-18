@@ -2,27 +2,15 @@ import { Suspense } from 'react';
 import { Outlet } from 'react-router';
 import Sidebar from '@shared/components/Sidebar.tsx';
 import { useAuth } from '@shared/auth/index.ts';
-import { allSidebarItems } from '@modules/registry.ts';
-
-/**
- * Sidebar links are read from the module registry.
- * Adding a new module with `sidebar` in its manifest
- * automatically makes it appear here.
- *
- * The static "UI Library" link is appended separately
- * since it's a dev utility, not a feature module.
- */
-const sidebarLinks = [
-  ...allSidebarItems,
-  { to: '/ui', label: 'UI Library' },
-];
+import { getVisibleNav } from '@root/navigation.ts';
 
 export default function RootLayout() {
-  const { user, hasRole, logout } = useAuth();
+  const { user, hasRole, hasPlan, logout } = useAuth();
 
-  const visibleLinks = sidebarLinks.filter(
-    (link) => !link.roles || hasRole(link.roles),
-  );
+  const visibleLinks = [
+    ...getVisibleNav(hasRole, hasPlan),
+    { to: '/ui', label: 'UI Library' },
+  ];
 
   return (
     <div className="min-h-screen flex bg-gray-50">

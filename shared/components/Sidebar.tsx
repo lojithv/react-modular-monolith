@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import type { UserRole } from '@shared/auth/index.ts';
 
 export interface SidebarLink {
   to: string;
   label: string;
-  roles?: UserRole[];
 }
 
 interface SidebarProps {

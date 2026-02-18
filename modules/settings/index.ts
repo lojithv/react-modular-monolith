@@ -4,7 +4,6 @@ import settingsRoutes from './routes.ts';
 export const settingsModule: ModuleManifest = {
   name: 'settings',
   routes: settingsRoutes,
-  sidebar: [{ to: '/settings', label: 'Settings', roles: ['admin', 'editor'] }],
   allowedRoles: ['admin', 'editor'],
 };
 

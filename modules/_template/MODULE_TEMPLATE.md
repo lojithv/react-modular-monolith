@@ -178,11 +178,11 @@ export const orderService = new OrderService();
 interface ModuleManifest {
   name: string;                   // Unique ID (e.g. 'orders')
   routes: RouteObject;            // React Router subtree
-  sidebar?: SidebarItem[];        // Nav entries (omit for hidden modules)
   allowedRoles?: UserRole[];      // 'admin' | 'editor' | 'viewer'
   minPlan?: PlanTier;             // 'free' | 'starter' | 'pro' | 'enterprise'
   public?: boolean;               // true = no auth required (e.g. auth module)
 }
+// Sidebar navigation is configured centrally in root/navigation.ts
 ```
 
 ---

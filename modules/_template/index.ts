@@ -11,9 +11,6 @@ export const __name__Module: ModuleManifest = {
   name: '__name__',
   routes: __name__Routes,
 
-  // Sidebar entry — set `roles` to restrict visibility per role
-  sidebar: [{ to: '/__name__', label: '__Name__' }],
-
   // Access control — omit for unrestricted, or list allowed roles
   allowedRoles: ['admin', 'editor'],
 
@@ -22,6 +19,8 @@ export const __name__Module: ModuleManifest = {
 
   // Set to true for public modules (e.g. auth) that render outside the shell
   // public: true,
+
+  // Sidebar navigation is configured in root/navigation.ts
 };
 
 export { __name__Routes };
